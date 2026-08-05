@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>PagePatch</title>
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="icon" type="image/x-icon" href="icons/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #1C1C1E; --panel: #2C2C2E; --panel2: #3A3A3C; --line: #38383A; --line2: #48484A;
+    --text: #FFFFFF; --dim: #98989D; --dim2: #7C7C82;
+    --blue: #0A84FF; --red: #FF453A; --green: #30D158;
+    --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  body { width: 340px; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 13px; letter-spacing: -0.01em; }
+
+  .header { padding: 15px 16px 12px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .logo img { width: 20px; height: 20px; border-radius: 5px; }
+  .host { font: 500 10.5px/1 var(--mono); color: var(--blue); background: rgba(10,132,255,0.12); padding: 4px 9px; border-radius: 999px; max-width: 175px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* iOS switch */
+  .switch { position: relative; width: 40px; height: 24px; flex-shrink: 0; display: inline-block; }
+  .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .switch .track { position: absolute; inset: 0; background: #39404E; border-radius: 999px; transition: background 0.2s ease; }
+  .switch .thumb { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.22s cubic-bezier(0.32,0.72,0,1); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+  .switch input:checked + .track { background: var(--green); }
+  .switch input:checked + .track + .thumb { transform: translateX(16px); }
+  .switch.sm { width: 34px; height: 20px; }
+  .switch.sm .thumb { width: 16px; height: 16px; }
+  .switch.sm input:checked + .track + .thumb { transform: translateX(14px); }
+  .switch.sm input:checked + .track { background: var(--blue); }
+
+  .pause-row { margin: 0 16px 4px; padding: 11px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; }
+  .pause-row .pr-label { font-weight: 600; font-size: 12.5px; }
+  .pause-row .pr-sub { font-size: 10.5px; color: var(--dim2); margin-top: 2px; }
+
+  .actions { padding: 12px 16px 0; display: flex; gap: 9px; }
+  .action-btn { flex: 1; padding: 12px 8px; border: 1.5px solid; border-radius: 13px; background: transparent; cursor: pointer; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: transform 0.1s, background 0.15s, border-color 0.15s; }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn .btn-icon { font-size: 19px; line-height: 1; display: flex; }
+  .action-btn .btn-icon svg { width: 21px; height: 21px; }
+  .action-btn .btn-label { font-size: 12px; font-weight: 650; }
+  .action-btn .btn-hint { font-size: 9.5px; font-weight: 400; opacity: 0.6; }
+  #hide-btn { border-color: rgba(255,69,58,0.5); color: #FF8078; }
+  #hide-btn:hover { background: rgba(255,69,58,0.1); border-color: var(--red); }
+  #edit-btn { border-color: rgba(10,132,255,0.5); color: #6FB4FF; }
+  #edit-btn:hover { background: rgba(10,132,255,0.1); border-color: var(--blue); }
+  .action-btn:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.5); }
+  .action-btn:disabled:hover { background: transparent; }
+
+  .ai-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: calc(100% - 32px); margin: 9px 16px 0; padding: 11px; border: 1.5px solid rgba(217,119,87,0.5); border-radius: 13px; background: rgba(217,119,87,0.14); color: #E8A183; font: 650 12.5px var(--font); cursor: pointer; transition: transform 0.1s, border-color 0.15s, background 0.15s; }
+  .ai-btn:hover { border-color: #D97757; background: rgba(217,119,87,0.18); }
+  .ai-btn:active { transform: scale(0.98); }
+  .ai-btn svg { width: 16px; height: 16px; }
+  .ai-btn .ai-kbd { margin-left: 2px; font: 400 10px var(--mono); opacity: 0.6; }
+
+  .looks { display: flex; gap: 7px; margin: 10px 16px 0; }
+  .look { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1px solid var(--line2); border-radius: 10px; background: var(--panel); color: var(--dim); font: 600 11px var(--font); cursor: pointer; transition: 0.14s; }
+  .look:hover { color: var(--text); border-color: var(--dim2); background: var(--panel2); }
+  .look:active { transform: scale(0.96); }
+  .look svg { width: 14px; height: 14px; }
+
+  .tip { margin: 11px 16px 4px; padding: 9px 12px; background: var(--panel); border-radius: 10px; font-size: 10.5px; color: var(--dim2); line-height: 1.6; }
+  .tip kbd { background: var(--line2); border-radius: 4px; padding: 1px 5px; font: 9.5px var(--mono); }
+
+  .divider { display: flex; align-items: center; gap: 9px; padding: 13px 16px 8px; color: var(--dim2); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+  .rules-list { max-height: 244px; overflow-y: auto; }
+  .rules-list::-webkit-scrollbar { width: 5px; }
+  .rules-list::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 3px; }
+
+  .rule-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--line); }
+  .rule-item.off { opacity: 0.45; }
+  .rule-badge { flex-shrink: 0; font: 700 10px/1 var(--font); padding: 4px 6px; border-radius: 5px; letter-spacing: 0.02em; }
+  .rule-badge.hide { background: rgba(255,69,58,0.14); color: #FF8078; border: 1px solid rgba(255,69,58,0.3); }
+  .rule-badge.edit { background: rgba(10,132,255,0.14); color: #6FB4FF; border: 1px solid rgba(10,132,255,0.3); }
+  .rule-info { flex: 1; min-width: 0; }
+  .rule-title { font-size: 12px; font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rule-change { font-size: 10.5px; margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+  .rule-orig { color: #FF8078; text-decoration: line-through; opacity: 0.75; max-width: 95px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rule-arrow { color: var(--dim2); flex-shrink: 0; }
+  .rule-new { color: #5FE08A; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rule-sel { font: 10px var(--mono); color: var(--dim2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .del-rule { flex-shrink: 0; background: none; border: none; color: var(--dim2); font-size: 15px; cursor: pointer; padding: 2px 4px; line-height: 1; border-radius: 6px; }
+  .del-rule:hover { color: var(--red); background: rgba(255,69,58,0.1); }
+  .del-rule svg { width: 13px; height: 13px; display: block; }
+
+  .empty { padding: 22px 16px; text-align: center; color: var(--dim2); font-size: 12px; line-height: 1.7; }
+  .empty strong { color: var(--dim); }
+
+  .footer { padding: 11px 16px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 8px; }
+  .count-label { font-size: 11px; color: var(--dim2); margin-right: auto; }
+  .fbtn { background: none; border: 1px solid var(--line2); color: var(--dim); font: 500 11px var(--font); padding: 5px 11px; border-radius: 8px; cursor: pointer; transition: 0.14s; }
+  .fbtn:hover { color: var(--text); border-color: var(--dim2); }
+  .fbtn.danger:hover { color: var(--red); border-color: var(--red); }
+  .fbtn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .manage { display: block; text-align: center; padding: 11px; border-top: 1px solid var(--line); color: var(--blue); font-weight: 600; font-size: 12px; cursor: pointer; }
+  .manage:hover { background: rgba(10,132,255,0.08); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo"><img src="icons/icon48.png" alt=""> PagePatch</div>
+  <div class="host" id="host-label">—</div>
+</div>
+
+<div class="pause-row" id="pause-row">
+  <div>
+    <div class="pr-label">Active on this site</div>
+    <div class="pr-sub" id="pause-sub">Patches are applied</div>
+  </div>
+  <label class="switch"><input type="checkbox" id="pause-toggle" checked><span class="track"></span><span class="thumb"></span></label>
+</div>
+
+<div class="actions">
+  <button class="action-btn" id="hide-btn">
+    <span class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg></span><span class="btn-label">Hide element</span><span class="btn-hint">⌥⇧H</span>
+  </button>
+  <button class="action-btn" id="edit-btn">
+    <span class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18.5 9.5a1.5 1.5 0 0 0 0-2.1l-1.9-1.9a1.5 1.5 0 0 0-2.1 0L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></span><span class="btn-label">Edit text</span><span class="btn-hint">⌥⇧E</span>
+  </button>
+</div>
+
+<button class="ai-btn" id="ai-btn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M18 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>
+  Ask Claude to edit an element <span class="ai-kbd">⌥⇧C</span>
+</button>
+
+<div class="looks">
+  <button class="look" id="look-dark" title="Invert the whole site to dark">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Dark
+  </button>
+  <button class="look" id="look-bigger" title="Increase text size site-wide">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h11v2M9.5 5v14M7 19h5M15 13v-1h6v1M18 12v7M16.5 19h3"/></svg>Bigger
+  </button>
+  <button class="look" id="look-gray" title="Desaturate the whole site">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" fill="currentColor"/></svg>Calm
+  </button>
+</div>
+
+<div class="tip">
+  Click a mode, then click any element. Use <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> to target parent / child / siblings precisely.
+</div>
+
+<div class="divider">Patches on this page</div>
+<div class="rules-list" id="rules-list"></div>
+
+<div class="footer">
+  <span class="count-label" id="count-label">0 patches</span>
+  <button class="fbtn" id="undo-btn">Undo last</button>
+  <button class="fbtn danger" id="clear-btn">Clear all</button>
+</div>
+
+<div class="manage" id="manage-btn">Manage all sites &amp; backup →</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

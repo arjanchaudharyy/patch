@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PagePatch · Dashboard</title>
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #000000; --panel: #1C1C1E; --panel2: #2C2C2E; --line: #38383A; --line2: #48484A;
+    --text: #FFFFFF; --dim: #98989D; --dim2: #7C7C82;
+    --blue: #0A84FF; --red: #FF453A; --green: #30D158; --yellow: #FFD426;
+    --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+    --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); letter-spacing: -0.01em; min-height: 100vh; padding: 40px 24px 80px; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+
+  /* header */
+  .top { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; }
+  .top img { width: 42px; height: 42px; border-radius: 11px; box-shadow: 0 4px 16px rgba(10,132,255,0.3); }
+  .top h1 { font-size: 22px; font-weight: 750; letter-spacing: -0.02em; }
+  .top .sub { color: var(--dim); font-size: 13px; margin-top: 2px; }
+  .top .grow { flex: 1; }
+  .toolbtn { display: inline-flex; align-items: center; gap: 7px; background: var(--panel); border: 1px solid var(--line2); color: var(--text); font: 600 13px var(--font); padding: 9px 15px; border-radius: 11px; cursor: pointer; transition: 0.15s var(--ease); }
+  .toolbtn:hover { border-color: var(--blue); background: var(--panel2); }
+  .toolbtn.primary { background: var(--blue); border-color: var(--blue); }
+  .toolbtn.primary:hover { filter: brightness(1.1); }
+
+  /* stats */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 15px; padding: 16px 18px; }
+  .stat .n { font-size: 26px; font-weight: 760; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .stat .l { color: var(--dim); font-size: 12px; margin-top: 3px; }
+  .stat.blue .n { color: #6FB4FF; } .stat.green .n { color: #5FE08A; }
+
+  /* search */
+  .search { width: 100%; background: var(--panel); border: 1px solid var(--line2); border-radius: 13px; padding: 12px 16px; color: var(--text); font: 500 14px var(--font); margin-bottom: 22px; outline: none; transition: border-color 0.15s; }
+  .search::placeholder { color: var(--dim2); }
+  .search:focus { border-color: var(--blue); }
+
+  /* site card */
+  .site { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; margin-bottom: 16px; overflow: hidden; }
+  .site-head { display: flex; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid var(--line); }
+  .site-host { font: 650 15px var(--font); }
+  .site-meta { color: var(--dim2); font-size: 11.5px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .site-head .grow { flex: 1; }
+  .paused-pill { font: 700 10px var(--font); letter-spacing: 0.04em; color: #FFD426; background: rgba(255,212,38,0.13); border: 1px solid rgba(255,212,38,0.3); padding: 3px 8px; border-radius: 999px; }
+  .icon-btn { background: none; border: 1px solid var(--line2); color: var(--dim); width: 30px; height: 30px; border-radius: 9px; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; transition: 0.14s; }
+  .icon-btn:hover { color: var(--red); border-color: var(--red); background: rgba(255,69,58,0.1); }
+  .icon-btn.share:hover { color: var(--blue); border-color: var(--blue); background: rgba(10,132,255,0.1); }
+
+  /* switch */
+  .switch { position: relative; width: 40px; height: 24px; flex-shrink: 0; display: inline-block; }
+  .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .switch .track { position: absolute; inset: 0; background: #39404E; border-radius: 999px; transition: background 0.2s; }
+  .switch .thumb { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.22s var(--ease); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+  .switch input:checked + .track { background: var(--green); }
+  .switch input:checked + .track + .thumb { transform: translateX(16px); }
+  .switch.sm { width: 34px; height: 20px; }
+  .switch.sm .thumb { width: 16px; height: 16px; }
+  .switch.sm input:checked + .track + .thumb { transform: translateX(14px); }
+  .switch.sm input:checked + .track { background: var(--blue); }
+
+  /* patch row */
+  .patch { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-top: 1px solid var(--panel2); }
+  .patch:first-child { border-top: none; }
+  .patch.off { opacity: 0.45; }
+  .badge { flex-shrink: 0; font: 700 10px var(--font); padding: 4px 7px; border-radius: 6px; letter-spacing: 0.03em; }
+  .badge.hide { background: rgba(255,69,58,0.14); color: #FF8078; border: 1px solid rgba(255,69,58,0.3); }
+  .badge.edit { background: rgba(10,132,255,0.14); color: #6FB4FF; border: 1px solid rgba(10,132,255,0.3); }
+  .p-info { flex: 1; min-width: 0; }
+  .p-title { font-size: 13.5px; font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .p-change { font-size: 11.5px; margin-top: 3px; display: flex; align-items: center; gap: 6px; }
+  .p-orig { color: #FF8078; text-decoration: line-through; opacity: 0.75; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .p-arrow { color: var(--dim2); } .p-new { color: #5FE08A; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .p-sel { font: 10.5px var(--mono); color: var(--dim2); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .p-note { font-size: 11px; color: var(--dim); margin-top: 4px; font-style: italic; }
+
+  /* modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; animation: fade 0.15s ease; }
+  @keyframes fade { from { opacity: 0; } }
+  .modal { width: min(520px, calc(100vw - 40px)); background: var(--panel); border: 1px solid var(--line2); border-radius: 18px; padding: 22px; box-shadow: 0 24px 70px rgba(0,0,0,0.5); }
+  .modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .modal p { color: var(--dim); font-size: 12.5px; line-height: 1.6; margin-bottom: 14px; }
+  .modal textarea { width: 100%; height: 96px; background: var(--panel2); border: 1px solid var(--line2); border-radius: 12px; padding: 11px 13px; color: var(--text); font: 11.5px var(--mono); resize: none; outline: none; }
+  .modal textarea:focus { border-color: var(--blue); }
+  .modal-row { display: flex; gap: 9px; margin-top: 14px; justify-content: flex-end; }
+  .modal-note { color: #5FE08A; font-size: 12px; margin-top: 10px; min-height: 16px; }
+  .modal-note.err { color: #FF8078; }
+
+  .empty { text-align: center; padding: 60px 20px; color: var(--dim2); }
+  .empty .big { font-size: 44px; margin-bottom: 14px; display: flex; justify-content: center; }
+  .empty .big svg { width: 46px; height: 46px; opacity: 0.6; }
+  .icon-btn svg { width: 15px; height: 15px; }
+  .toolbtn svg { flex-shrink: 0; }
+  .empty p { font-size: 14px; line-height: 1.6; }
+
+  .foot { text-align: center; color: var(--dim2); font-size: 11.5px; margin-top: 36px; }
+  input[type=file] { display: none; }
+
+  /* Claude Code bridge card */
+  .bridge { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; margin-bottom: 20px; }
+  .bridge-row { display: flex; align-items: center; gap: 13px; }
+  .bridge-icon { width: 38px; height: 38px; border-radius: 10px; background: rgba(217,119,87,0.15); color: #E08862; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .bridge-icon svg { width: 22px; height: 22px; }
+  .bridge-title { font-weight: 650; font-size: 15px; display: flex; align-items: center; gap: 9px; }
+  .bridge-sub { color: var(--dim); font-size: 12px; margin-top: 2px; }
+  .bstatus { font: 600 10px/1 var(--font); letter-spacing: 0.03em; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; }
+  .bstatus.off { color: var(--dim2); background: rgba(120,128,140,0.14); }
+  .bstatus.on { color: #5FE08A; background: rgba(48,209,88,0.14); }
+  .bstatus.err { color: #FF8078; background: rgba(255,69,58,0.14); }
+  .bstatus.wait { color: #E08862; background: rgba(217,119,87,0.14); }
+  .bridge-setup { margin-top: 15px; border-top: 1px solid var(--line); padding-top: 15px; display: none; }
+  .bridge-setup.show { display: block; }
+  .bridge-steps { margin: 0 0 14px 18px; color: var(--dim); font-size: 12.5px; line-height: 1.7; }
+  .bridge-steps code { font: 11.5px var(--mono); background: var(--panel2); border: 1px solid var(--line); padding: 2px 7px; border-radius: 6px; color: #E08862; }
+  .bridge-copy { display: flex; align-items: center; gap: 8px; margin: 2px 0 15px; flex-wrap: wrap; }
+  .bridge-copybtn { background: var(--panel2); border: 1px solid var(--line2); color: var(--text); font: 600 11.5px var(--font); padding: 7px 12px; border-radius: 9px; cursor: pointer; transition: 0.14s; }
+  .bridge-copybtn:hover { border-color: #D97757; }
+  .bridge-copybtn.primary { background: #D97757; border-color: #D97757; color: #2A140B; font-weight: 700; }
+  .bridge-copybtn.primary:hover { filter: brightness(1.07); }
+  .bridge-lead { margin: 0 0 13px; color: var(--text); font-size: 13px; line-height: 1.6; }
+  .bridge-copynote { color: #5FE08A; font-size: 11.5px; }
+  .bridge-note { margin: 0 0 12px; color: var(--dim); font-size: 12px; }
+  .bridge-note code { font: 11px var(--mono); background: var(--panel2); border: 1px solid var(--line); padding: 1px 5px; border-radius: 5px; color: #E08862; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <img src="icons/icon128.png" alt="">
+    <div>
+      <h1>PagePatch</h1>
+      <div class="sub">Every patch you've made, across every site.</div>
+    </div>
+    <div class="grow"></div>
+    <button class="toolbtn" id="importpack-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3M12 3v12M8 11l4 4 4-4"/></svg> Import pack</button>
+    <button class="toolbtn" id="import-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"/></svg> Backup</button>
+    <button class="toolbtn primary" id="export-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg> Export backup</button>
+    <input type="file" id="file-input" accept="application/json,.json">
+  </div>
+
+  <div class="bridge" id="bridge">
+    <div class="bridge-row">
+      <div class="bridge-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M18 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>
+      </div>
+      <div style="flex:1">
+        <div class="bridge-title">Claude Code <span class="bstatus off" id="bstatus">Not connected</span></div>
+        <div class="bridge-sub">Select any element on a page and ask Claude Code to rewrite or restyle it.</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="bridge-enabled"><span class="track"></span><span class="thumb"></span></label>
+    </div>
+    <div class="bridge-setup" id="bridge-setup">
+      <p class="bridge-lead"><b>One-step setup.</b> Click <b>Copy prompt for Claude</b>, paste it into Claude Code, and do what it says. That single prompt registers the bridge, has Claude restart, and starts watching your edits — no pairing token, no port.</p>
+      <div class="bridge-copy">
+        <button class="bridge-copybtn primary" id="copy-prompt">Copy prompt for Claude</button>
+        <button class="bridge-copybtn" id="copy-cmd">Just the command</button>
+        <button class="bridge-copybtn" id="bridge-retry">Retry connection</button>
+        <span class="bridge-copynote" id="copy-note"></span>
+      </div>
+      <p class="bridge-note">Not on npm yet? The prompt carries a local-path fallback — point it at this repo's <code>bridge/src/index.js</code>. The extension then finds the bridge on <code>127.0.0.1</code> by itself.</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="s-sites">0</div><div class="l">Sites</div></div>
+    <div class="stat blue"><div class="n" id="s-total">0</div><div class="l">Total patches</div></div>
+    <div class="stat green"><div class="n" id="s-active">0</div><div class="l">Active</div></div>
+  </div>
+
+  <input class="search" id="search" placeholder="Search sites or patch text…">
+
+  <div id="sites"></div>
+
+  <div class="foot">Changes here apply live to open tabs. Backups are plain JSON — keep them anywhere.</div>
+</div>
+<script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "PagePatch",
+  "version": "3.2.0",
+  "description": "Permanently hide or edit any element on any website — your changes survive every refresh and restart.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "hide-element": {
+      "suggested_key": { "default": "Alt+Shift+H" },
+      "description": "PagePatch: hide an element"
+    },
+    "edit-text": {
+      "suggested_key": { "default": "Alt+Shift+E" },
+      "description": "PagePatch: edit text"
+    },
+    "ask-claude": {
+      "suggested_key": { "default": "Alt+Shift+C" },
+      "description": "PagePatch: ask Claude Code to edit an element"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "PagePatch — edit this page",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  }
+}

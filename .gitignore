@@ -1,0 +1,4 @@
+node_modules/
+*.log
+.DS_Store
+bridge/node_modules/

@@ -1,0 +1,13 @@
+{
+  "name": "pagepatch-bridge",
+  "version": "0.1.0",
+  "description": "Local bridge that lets Claude Code edit web pages you select in the PagePatch browser extension. Speaks MCP to Claude Code and a token-authed localhost WebSocket to the extension.",
+  "type": "module",
+  "bin": { "pagepatch-bridge": "src/index.js" },
+  "engines": { "node": ">=18" },
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "ws": "^8.18.0"
+  }
+}
