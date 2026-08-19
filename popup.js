@@ -25,6 +25,7 @@ function disableAll(reason) {
 
 async function render() {
   tab = await getActiveTab();
+  if (!tab) { disableAll("Couldn’t read the current tab.\nTry reopening PagePatch."); return; }
   let host = '—';
   try { host = new URL(tab.url).hostname || tab.url; } catch (_) {}
   const hostEl = document.getElementById('host-label');

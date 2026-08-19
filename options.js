@@ -31,7 +31,7 @@ function sanitizePackRules(rules) {
   if (!Array.isArray(rules)) return [];
   return rules.filter(r => r && PACK_ACTIONS.has(r.action) && typeof r.selector === 'string' && r.selector.length <= 1024)
     .map(r => {
-      const out = { id: genId(), action: r.action, selector: r.selector.slice(0, 1024), source: 'pack', createdAt: Date.now() };
+      const out = { id: genId(), action: r.action, selector: r.selector.replace(/[<>{}]/g, '').slice(0, 1024), source: 'pack', createdAt: Date.now() };
       if (r.action === 'text') { out.value = String(r.value ?? '').slice(0, 8000); out.original = String(r.original ?? '').slice(0, 8000); }
       if (r.action === 'style') out.value = sanitizeCssValue(r.value);
       if (r.label) out.label = String(r.label).slice(0, 80);
