@@ -195,7 +195,7 @@ function disconnectBridge() {
 
 chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg?.type === 'bridge-get-state') { reply({ state: bridgeState, error: bridgeError }); return; }
-  if (msg?.type === 'bridge-connect') { connectBridge().then(state => reply({ state, error: bridgeError })); return true; }
+  if (msg?.type === 'bridge-connect') { connectBridge().then(state => reply({ state, error: bridgeError })).catch(err => reply({ state: 'error', error: String(err) })); return true; }
   if (msg?.type === 'bridge-disconnect') { disconnectBridge(); reply({ state: 'disconnected' }); return; }
 
   if (msg?.type === 'ai-edit-request' && sender.tab) {

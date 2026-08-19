@@ -525,11 +525,14 @@
     window.addEventListener('resize', place, true);
 
     let done = false;
+    let onEditKey = null, onEditPaste = null;
     const finish = () => {
       window.removeEventListener('scroll', place, true);
       window.removeEventListener('resize', place, true);
       el.removeEventListener('click', blockNav, true);
       el.removeEventListener('auxclick', blockNav, true);
+      if (onEditKey) el.removeEventListener('keydown', onEditKey);
+      if (onEditPaste) el.removeEventListener('paste', onEditPaste);
       el.draggable = prevDraggable;
       el.contentEditable = 'false';
       el.removeAttribute('data-pp-editing');
@@ -577,15 +580,17 @@
     });
     // Hand this same element off to Claude Code.
     bar.querySelector('#pp-eb-claude').addEventListener('click', () => { cancel(); doAI(el); });
-    el.addEventListener('keydown', ev => {
+    onEditKey = ev => {
       if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); save(); }
       else if (ev.key === 'Escape') { ev.preventDefault(); cancel(); }
-    });
-    el.addEventListener('paste', ev => {
+    };
+    onEditPaste = ev => {
       ev.preventDefault();
       const text = (ev.clipboardData || window.clipboardData).getData('text/plain');
       document.execCommand('insertText', false, text);
-    });
+    };
+    el.addEventListener('keydown', onEditKey);
+    el.addEventListener('paste', onEditPaste);
   }
 
   function selectAll(el) {
@@ -899,7 +904,9 @@
   // ──────────────────────────────────────────────────────────── MESSAGES ────
 
   function persistAnd(reply, extra) {
-    saveRules().then(() => { reconcile(true); reply({ ok: true, ...(extra || {}) }); });
+    saveRules()
+      .then(() => { reconcile(true); reply({ ok: true, ...(extra || {}) }); })
+      .catch(err => { console.warn('PagePatch: save failed', err); try { reply({ ok: false }); } catch (_) {} });
   }
 
   chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
