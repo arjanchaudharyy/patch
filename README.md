@@ -1,5 +1,9 @@
 # PagePatch
 
+> Cursor for any website. Hide or rewrite anything on any page, permanently, and edit it with AI.
+
+MIT licensed and open source. Contributions welcome.
+
 Permanently hide or rewrite anything on any website. Your changes survive refresh,
 hard refresh, and restart — stored locally and re-applied every time the page loads,
 with **zero flash** (patched text never appears as its original, even for a frame).
@@ -104,3 +108,16 @@ like any other patch.
 - Structural selectors can break if a site ships a major redesign; just re-apply.
 - The `localStorage` fast-path means a site's own scripts could read your patch
   list for that site. Everything stays local to your browser.
+
+## Contributing
+
+PagePatch is open source under the [MIT license](LICENSE). Issues and pull
+requests are welcome, whether it is a bug on a specific site, a new quick action,
+or an improvement to the Claude Code bridge. To hack on it:
+
+1. `git clone` this repo and load it unpacked (see **Install** above).
+2. For the AI bridge, work in `bridge/` (`npm install`, `npm test`).
+3. Open a PR describing what changed and how you tested it.
+
+No build step, no framework. It is plain JS on purpose, so it stays easy to read
+and audit.
