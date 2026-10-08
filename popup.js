@@ -185,6 +185,8 @@ document.getElementById('pause-toggle').addEventListener('change', async (e) => 
 
 // One-tap site-wide "looks" — declarative style rules, reversible like any patch.
 // The `[id^="pp-"]` re-invert keeps PagePatch's own UI readable under Dark.
+// Broad text selector — recolors/retypes copy without nuking icon fonts.
+const TEXT_SEL = 'body,p,li,span,a,h1,h2,h3,h4,h5,h6,td,th,blockquote,label,input,textarea,button,figcaption';
 const PRESETS = {
   dark: [
     { action: 'style', selector: 'html', value: 'background:#fff!important;filter:invert(1) hue-rotate(180deg)!important', label: 'Dark mode' },
@@ -192,14 +194,28 @@ const PRESETS = {
   ],
   bigger: [{ action: 'style', selector: 'html', value: 'font-size:118%!important', label: 'Bigger text' }],
   gray: [{ action: 'style', selector: 'html', value: 'filter:grayscale(1)!important', label: 'Calm (grayscale)' }],
+  // Fonts — swap the typeface site-wide.
+  serif:    [{ action: 'style', selector: TEXT_SEL, value: "font-family:Georgia,'Times New Roman',serif!important", label: 'Serif font' }],
+  mono:     [{ action: 'style', selector: TEXT_SEL, value: "font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace!important", label: 'Mono font' }],
+  rounded:  [{ action: 'style', selector: TEXT_SEL, value: "font-family:'SF Pro Rounded',Nunito,'Segoe UI',system-ui,sans-serif!important", label: 'Rounded font' }],
+  readable: [{ action: 'style', selector: TEXT_SEL, value: "font-family:'Atkinson Hyperlegible',Verdana,Tahoma,sans-serif!important;letter-spacing:0.01em!important", label: 'Readable font' }],
+  // Reading comfort.
+  spacing:  [{ action: 'style', selector: 'p,li,article,blockquote', value: 'line-height:1.85!important;letter-spacing:0.012em!important', label: 'Comfort spacing' }],
+  contrast: [{ action: 'style', selector: 'html', value: 'filter:contrast(1.18)!important', label: 'High contrast' }],
+  sepia:    [{ action: 'style', selector: 'html', value: 'filter:sepia(0.38) brightness(1.02)!important', label: 'Sepia (warm)' }],
 };
 async function applyLook(key) {
+  if (!PRESETS[key]) return;
   try { await send(tab, { type: 'add-rules', rules: PRESETS[key] }); } catch (_) {}
   render();
 }
 document.getElementById('look-dark').addEventListener('click', () => applyLook('dark'));
 document.getElementById('look-bigger').addEventListener('click', () => applyLook('bigger'));
 document.getElementById('look-gray').addEventListener('click', () => applyLook('gray'));
+// Delegated handler for the Fonts / Reading chip rows.
+document.querySelectorAll('[data-look]').forEach(chip => {
+  chip.addEventListener('click', () => applyLook(chip.dataset.look));
+});
 
 document.getElementById('undo-btn').addEventListener('click', async () => {
   try { await send(tab, { type: 'undo-last' }); } catch (_) {}

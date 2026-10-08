@@ -91,6 +91,14 @@
   .look:active { transform: scale(0.96); }
   .look svg { width: 14px; height: 14px; }
 
+  .chip-label { margin: 11px 16px 0; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim2); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 16px 0; }
+  .chip { padding: 6px 11px; border: 1px solid var(--line2); border-radius: 999px; background: var(--panel); color: var(--dim); font: 600 10.5px var(--font); cursor: pointer; transition: 0.14s; }
+  .chip:hover { color: var(--text); border-color: var(--blue); background: var(--panel2); }
+  .chip:active { transform: scale(0.95); }
+  .chip.serif { font-family: Georgia, serif; }
+  .chip.mono { font-family: var(--mono); }
+
   .tip { margin: 11px 16px 4px; padding: 9px 12px; background: var(--panel); border-radius: 10px; font-size: 10.5px; color: var(--dim2); line-height: 1.6; }
   .tip kbd { background: var(--line2); border-radius: 4px; padding: 1px 5px; font: 9.5px var(--mono); }
 
@@ -222,6 +230,21 @@
   <button class="look" id="look-gray" title="Desaturate the whole site">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" fill="currentColor"/></svg>Calm
   </button>
+</div>
+
+<div class="chip-label">Fonts</div>
+<div class="chips">
+  <button class="chip serif" data-look="serif" title="Switch the whole site to a serif typeface">Serif</button>
+  <button class="chip mono" data-look="mono" title="Monospace typeface">Mono</button>
+  <button class="chip" data-look="rounded" title="Rounded sans typeface">Rounded</button>
+  <button class="chip" data-look="readable" title="High-legibility typeface with extra spacing">Readable</button>
+</div>
+
+<div class="chip-label">Reading</div>
+<div class="chips">
+  <button class="chip" data-look="spacing" title="Looser line height and letter spacing">Comfort spacing</button>
+  <button class="chip" data-look="contrast" title="Increase contrast site-wide">High contrast</button>
+  <button class="chip" data-look="sepia" title="Warm, paper-like tone">Sepia</button>
 </div>
 
 <div class="tip">
