@@ -111,6 +111,13 @@ async function render() {
   const sv = document.getElementById('size-val');
   if (sv) sv.textContent = fontPct + '%';
   markActiveStyles(rules);
+  // Reflect the active text color swatch.
+  const colorRule = rules.find(r => r.label === 'Text color' && !r.disabled);
+  const cm = colorRule && /color:(#[0-9a-fA-F]{3,6})/.exec(colorRule.value || '');
+  const curColor = cm ? cm[1].toLowerCase() : '';
+  document.querySelectorAll('#text-colors .swatch').forEach(sw => {
+    sw.classList.toggle('active', (sw.dataset.color || '').toLowerCase() === curColor);
+  });
   const rs = document.getElementById('reset-styles');
   if (rs) rs.disabled = !rules.some(r => r.action === 'style' && r.source === 'preset');
 
@@ -281,6 +288,16 @@ document.getElementById('reset-styles').addEventListener('click', async () => {
   try { await send(tab, { type: 'clear-styles' }); } catch (_) {}
   fontPct = 100;
   render();
+});
+
+// Text color swatches — one updatable rule; the × swatch clears it.
+document.querySelectorAll('#text-colors .swatch').forEach(sw => {
+  sw.addEventListener('click', async () => {
+    const c = sw.dataset.color;
+    const value = c ? `color:${c}!important` : '';
+    try { await send(tab, { type: 'set-style', selector: TEXT_SEL, value, label: 'Text color' }); } catch (_) {}
+    render();
+  });
 });
 
 document.getElementById('undo-btn').addEventListener('click', async () => {

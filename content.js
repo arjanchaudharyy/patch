@@ -962,8 +962,13 @@
         // instead of piling up a new rule on every tap.
         const { selector, value, label } = msg;
         if (typeof selector !== 'string' || typeof value !== 'string') { reply({ ok: false }); break; }
-        const existing = rules.find(r => r.action === 'style' && r.label === label && r.selector === selector);
-        if (existing) { existing.value = value; existing.disabled = false; }
+        const idx = rules.findIndex(r => r.action === 'style' && r.label === label && r.selector === selector);
+        if (value === '') {               // empty value clears the labeled rule
+          if (idx >= 0) { rules.splice(idx, 1); persistAnd(reply); return true; }
+          reply({ ok: true });
+          break;
+        }
+        if (idx >= 0) { rules[idx].value = value; rules[idx].disabled = false; }
         else rules.push({ id: genId(), action: 'style', selector, value, label, source: 'preset', createdAt: Date.now() });
         persistAnd(reply);
         return true;

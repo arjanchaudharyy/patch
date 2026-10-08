@@ -97,6 +97,13 @@
   .chip.serif { font-family: Georgia, serif; }
   .chip.mono { font-family: var(--mono); }
 
+  .swatches { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 16px 0; }
+  .swatch { width: 26px; height: 26px; border-radius: 8px; border: 2px solid var(--line2); cursor: pointer; padding: 0; transition: transform 0.12s, border-color 0.14s; }
+  .swatch:hover { transform: scale(1.1); }
+  .swatch.active { border-color: var(--blue); }
+  .swatch.sw-default { display: flex; align-items: center; justify-content: center; background: var(--panel); color: var(--dim2); font: 700 15px var(--font); line-height: 1; }
+  .swatch.sw-default:hover { color: var(--text); }
+
   .stepper { display: flex; align-items: center; gap: 7px; margin: 6px 16px 0; }
   .step-btn { width: 36px; height: 32px; border: 1px solid var(--line2); border-radius: 9px; background: var(--panel); color: var(--text); font: 700 14px var(--font); cursor: pointer; transition: 0.14s; }
   .step-btn:hover { border-color: var(--blue); background: var(--panel2); }
@@ -279,6 +286,17 @@
   <button class="chip" data-look="underline" title="Underline every link">Underline links</button>
   <button class="chip" data-look="leftalign" title="Left-align body text">Left-align</button>
   <button class="chip" data-look="noimg" title="Hide all images and video">Hide images</button>
+</div>
+
+<div class="chip-label">Text color</div>
+<div class="swatches" id="text-colors">
+  <button class="swatch sw-default" data-color="" title="Default (site color)">×</button>
+  <button class="swatch" data-color="#111111" style="background:#111111" title="Black"></button>
+  <button class="swatch" data-color="#454545" style="background:#454545" title="Charcoal"></button>
+  <button class="swatch" data-color="#5B4636" style="background:#5B4636" title="Warm brown"></button>
+  <button class="swatch" data-color="#1A2A4A" style="background:#1A2A4A" title="Navy"></button>
+  <button class="swatch" data-color="#0A84FF" style="background:#0A84FF" title="Blue"></button>
+  <button class="swatch" data-color="#F5F5F5" style="background:#F5F5F5" title="Near-white"></button>
 </div>
 
 <button class="reset-styles" id="reset-styles" title="Remove all one-tap looks, fonts, text size and reading styles on this site">Reset quick styles</button>
