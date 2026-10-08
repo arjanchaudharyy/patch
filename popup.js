@@ -55,6 +55,11 @@ function initAppearance() {
     const open = panel.classList.toggle('show');
     btn.classList.toggle('open', open);
   });
+  const closePanel = () => { panel.classList.remove('show'); btn.classList.remove('open'); };
+  document.addEventListener('click', (e) => {
+    if (panel.classList.contains('show') && !panel.contains(e.target) && !btn.contains(e.target)) closePanel();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
   document.querySelectorAll('#theme-seg [data-theme-val]').forEach(b => {
     b.addEventListener('click', () => setTheme(b.dataset.themeVal));
   });
@@ -105,6 +110,7 @@ async function render() {
   fontPct = m ? +m[1] : 100;
   const sv = document.getElementById('size-val');
   if (sv) sv.textContent = fontPct + '%';
+  markActiveStyles(rules);
 
   // Pause switch (checked = active)
   const pt = document.getElementById('pause-toggle');
@@ -212,6 +218,28 @@ const PRESETS = {
   contrast: [{ action: 'style', selector: 'html', value: 'filter:contrast(1.18)!important', label: 'High contrast' }],
   sepia:    [{ action: 'style', selector: 'html', value: 'filter:sepia(0.38) brightness(1.02)!important', label: 'Sepia (warm)' }],
 };
+// Highlight the quick-style controls whose rules are currently applied.
+const LOOK_LABELS = {
+  'look-dark': ['Dark mode'],
+  'look-bigger': ['Bigger text'],
+  'look-gray': ['Calm (grayscale)'],
+};
+const CHIP_LABELS = {
+  serif: 'Serif font', mono: 'Mono font', rounded: 'Rounded font', readable: 'Readable font',
+  spacing: 'Comfort spacing', contrast: 'High contrast', sepia: 'Sepia (warm)',
+};
+function markActiveStyles(rules) {
+  const active = new Set((rules || []).filter(r => !r.disabled).map(r => r.label));
+  Object.entries(LOOK_LABELS).forEach(([id, labels]) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', labels.some(l => active.has(l)));
+  });
+  document.querySelectorAll('[data-look]').forEach(chip => {
+    const label = CHIP_LABELS[chip.dataset.look];
+    chip.classList.toggle('active', !!label && active.has(label));
+  });
+}
+
 async function applyLook(key) {
   if (!PRESETS[key]) return;
   try { await send(tab, { type: 'add-rules', rules: PRESETS[key] }); } catch (_) {}
