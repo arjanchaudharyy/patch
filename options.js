@@ -391,4 +391,52 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
+// ---- Appearance (shared with the popup via localStorage + chrome.storage) ---
+const THEME_ICONS = {
+  auto: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/></svg>',
+  light: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v1.5M12 19.5V21M4.5 4.5l1 1M18.5 18.5l1 1M3 12h1.5M19.5 12H21M4.5 19.5l1-1M18.5 5.5l1-1"/></svg>',
+  dark: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+};
+function appResolve(t) {
+  return t === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : t;
+}
+function appGetTheme() { return localStorage.getItem('pp_theme') || 'auto'; }
+function appGetAccent() { return localStorage.getItem('pp_accent') || 'blue'; }
+function appApply(theme, accent) {
+  document.documentElement.setAttribute('data-theme', appResolve(theme));
+  document.documentElement.setAttribute('data-accent', accent);
+  const ico = document.getElementById('theme-ico');
+  const txt = document.getElementById('theme-txt');
+  if (ico) ico.innerHTML = THEME_ICONS[theme] || THEME_ICONS.auto;
+  if (txt) txt.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
+  document.querySelectorAll('#accents-bar .dot').forEach(d => {
+    d.classList.toggle('active', d.dataset.accent === accent);
+  });
+}
+function appSetTheme(t) {
+  localStorage.setItem('pp_theme', t);
+  try { chrome.storage.local.set({ pp_theme: t }); } catch (_) {}
+  appApply(t, appGetAccent());
+}
+function appSetAccent(a) {
+  localStorage.setItem('pp_accent', a);
+  try { chrome.storage.local.set({ pp_accent: a }); } catch (_) {}
+  appApply(appGetTheme(), a);
+}
+function initAppearance() {
+  appApply(appGetTheme(), appGetAccent());
+  document.getElementById('theme-cycle').addEventListener('click', () => {
+    const order = ['auto', 'light', 'dark'];
+    const next = order[(order.indexOf(appGetTheme()) + 1) % order.length];
+    appSetTheme(next);
+  });
+  document.querySelectorAll('#accents-bar .dot').forEach(d => {
+    d.addEventListener('click', () => appSetAccent(d.dataset.accent));
+  });
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+    if (appGetTheme() === 'auto') appApply('auto', appGetAccent());
+  });
+}
+initAppearance();
+
 load();
