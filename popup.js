@@ -215,6 +215,8 @@ const PRESETS = {
   mono:     [{ action: 'style', selector: TEXT_SEL, value: "font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace!important", label: 'Mono font' }],
   rounded:  [{ action: 'style', selector: TEXT_SEL, value: "font-family:'SF Pro Rounded',Nunito,'Segoe UI',system-ui,sans-serif!important", label: 'Rounded font' }],
   readable: [{ action: 'style', selector: TEXT_SEL, value: "font-family:'Atkinson Hyperlegible',Verdana,Tahoma,sans-serif!important;letter-spacing:0.01em!important", label: 'Readable font' }],
+  dyslexic: [{ action: 'style', selector: TEXT_SEL, value: "font-family:'OpenDyslexic','Comic Sans MS',cursive!important;letter-spacing:0.02em!important", label: 'Dyslexic font' }],
+  slab:     [{ action: 'style', selector: TEXT_SEL, value: "font-family:'Rockwell','Roboto Slab',Georgia,serif!important", label: 'Slab font' }],
   // Reading comfort.
   spacing:  [{ action: 'style', selector: 'p,li,article,blockquote', value: 'line-height:1.85!important;letter-spacing:0.012em!important', label: 'Comfort spacing' }],
   contrast: [{ action: 'style', selector: 'html', value: 'filter:contrast(1.18)!important', label: 'High contrast' }],
@@ -233,6 +235,7 @@ const LOOK_LABELS = {
 };
 const CHIP_LABELS = {
   serif: 'Serif font', mono: 'Mono font', rounded: 'Rounded font', readable: 'Readable font',
+  dyslexic: 'Dyslexic font', slab: 'Slab font',
   spacing: 'Comfort spacing', contrast: 'High contrast', sepia: 'Sepia (warm)',
   rtl: 'Right-to-left', underline: 'Underline links', leftalign: 'Left-align text', noimg: 'Hide images',
 };
