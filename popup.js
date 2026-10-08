@@ -111,6 +111,8 @@ async function render() {
   const sv = document.getElementById('size-val');
   if (sv) sv.textContent = fontPct + '%';
   markActiveStyles(rules);
+  const rs = document.getElementById('reset-styles');
+  if (rs) rs.disabled = !rules.some(r => r.action === 'style' && r.source === 'preset');
 
   // Pause switch (checked = active)
   const pt = document.getElementById('pause-toggle');
@@ -264,6 +266,13 @@ async function applySize() {
 document.getElementById('size-down').addEventListener('click', () => { fontPct = Math.max(60, fontPct - 10); applySize(); });
 document.getElementById('size-up').addEventListener('click', () => { fontPct = Math.min(220, fontPct + 10); applySize(); });
 document.getElementById('size-reset').addEventListener('click', () => { fontPct = 100; applySize(); });
+
+// Remove every preset style (looks, fonts, size, reading) on this site at once.
+document.getElementById('reset-styles').addEventListener('click', async () => {
+  try { await send(tab, { type: 'clear-styles' }); } catch (_) {}
+  fontPct = 100;
+  render();
+});
 
 document.getElementById('undo-btn').addEventListener('click', async () => {
   try { await send(tab, { type: 'undo-last' }); } catch (_) {}

@@ -988,6 +988,16 @@
         persistAnd(reply);
         return true;
 
+      case 'clear-styles': {
+        // Remove only the one-tap quick styles (preset style rules). Leaves
+        // hide/text patches, AI (Claude) edits, and manual styles untouched.
+        const before = rules.length;
+        rules = rules.filter(r => !(r.action === 'style' && r.source === 'preset'));
+        if (rules.length !== before) { persistAnd(reply); return true; }
+        reply({ ok: true });
+        break;
+      }
+
       case 'ai-apply':
         onAIApply(msg.requestId, msg.patch);
         break;
