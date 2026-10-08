@@ -389,6 +389,12 @@ chrome.storage.onChanged.addListener((changes, area) => {
     clearTimeout(reloadTimer);
     reloadTimer = setTimeout(load, 150);
   }
+  // Live-sync appearance when it's changed from the popup (or another tab).
+  if (changes.pp_theme || changes.pp_accent) {
+    if (changes.pp_theme) localStorage.setItem('pp_theme', changes.pp_theme.newValue);
+    if (changes.pp_accent) localStorage.setItem('pp_accent', changes.pp_accent.newValue);
+    appApply(appGetTheme(), appGetAccent());
+  }
 });
 
 // ---- Appearance (shared with the popup via localStorage + chrome.storage) ---
