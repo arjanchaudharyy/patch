@@ -219,6 +219,11 @@ const PRESETS = {
   spacing:  [{ action: 'style', selector: 'p,li,article,blockquote', value: 'line-height:1.85!important;letter-spacing:0.012em!important', label: 'Comfort spacing' }],
   contrast: [{ action: 'style', selector: 'html', value: 'filter:contrast(1.18)!important', label: 'High contrast' }],
   sepia:    [{ action: 'style', selector: 'html', value: 'filter:sepia(0.38) brightness(1.02)!important', label: 'Sepia (warm)' }],
+  // Layout / language reading aids.
+  rtl:       [{ action: 'style', selector: 'html', value: 'direction:rtl!important', label: 'Right-to-left' }],
+  underline: [{ action: 'style', selector: 'a', value: 'text-decoration:underline!important', label: 'Underline links' }],
+  leftalign: [{ action: 'style', selector: 'p,li,article,blockquote', value: 'text-align:left!important', label: 'Left-align text' }],
+  noimg:     [{ action: 'style', selector: 'img,picture,video,[style*="background-image"]', value: 'visibility:hidden!important', label: 'Hide images' }],
 };
 // Highlight the quick-style controls whose rules are currently applied.
 const LOOK_LABELS = {
@@ -229,6 +234,7 @@ const LOOK_LABELS = {
 const CHIP_LABELS = {
   serif: 'Serif font', mono: 'Mono font', rounded: 'Rounded font', readable: 'Readable font',
   spacing: 'Comfort spacing', contrast: 'High contrast', sepia: 'Sepia (warm)',
+  rtl: 'Right-to-left', underline: 'Underline links', leftalign: 'Left-align text', noimg: 'Hide images',
 };
 function markActiveStyles(rules) {
   const active = new Set((rules || []).filter(r => !r.disabled).map(r => r.label));
