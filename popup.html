@@ -166,6 +166,8 @@
   .appearance.show { max-height: 180px; opacity: 1; margin: 2px 16px 6px; }
   .appearance-inner { padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
   .app-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim2); margin-bottom: 8px; }
+  .app-reset { margin-top: 12px; width: 100%; padding: 7px; background: none; border: 1px solid var(--line2); border-radius: 8px; color: var(--dim); font: 600 10.5px var(--font); cursor: pointer; transition: 0.14s; }
+  .app-reset:hover { color: var(--text); border-color: var(--dim2); }
   .seg { display: flex; gap: 4px; background: var(--panel2); border-radius: 9px; padding: 3px; }
   .seg button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 7px 4px; border: none; border-radius: 7px; background: transparent; color: var(--dim); font: 600 11px var(--font); cursor: pointer; transition: 0.14s; }
   .seg button svg { width: 13px; height: 13px; }
@@ -212,6 +214,7 @@
       <button class="accent-dot" data-accent="pink" title="Pink"></button>
       <button class="accent-dot" data-accent="teal" title="Teal"></button>
     </div>
+    <button class="app-reset" id="app-reset" title="Back to Auto theme and Blue accent">Reset to defaults</button>
   </div>
 </div>
 

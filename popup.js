@@ -66,6 +66,8 @@ function initAppearance() {
   document.querySelectorAll('#accents .accent-dot').forEach(b => {
     b.addEventListener('click', () => setAccent(b.dataset.accent));
   });
+  const reset = document.getElementById('app-reset');
+  if (reset) reset.addEventListener('click', () => { setTheme('auto'); setAccent('blue'); });
   // Keep "Auto" live if the OS theme flips while the popup is open.
   matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
     if (getTheme() === 'auto') applyAppearance('auto', getAccent());
