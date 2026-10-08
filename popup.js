@@ -29,10 +29,14 @@ function applyAppearance(theme, accent) {
   d.setAttribute('data-accent', accent);
   // Reflect active states in the popover.
   document.querySelectorAll('#theme-seg [data-theme-val]').forEach(b => {
-    b.classList.toggle('active', b.dataset.themeVal === theme);
+    const on = b.dataset.themeVal === theme;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', String(on));
   });
   document.querySelectorAll('#accents .accent-dot').forEach(b => {
-    b.classList.toggle('active', b.dataset.accent === accent);
+    const on = b.dataset.accent === accent;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', String(on));
   });
 }
 function getTheme() { return localStorage.getItem('pp_theme') || 'auto'; }
@@ -118,7 +122,9 @@ async function render() {
   const cm = colorRule && /color:(#[0-9a-fA-F]{3,6})/.exec(colorRule.value || '');
   const curColor = cm ? cm[1].toLowerCase() : '';
   document.querySelectorAll('#text-colors .swatch').forEach(sw => {
-    sw.classList.toggle('active', (sw.dataset.color || '').toLowerCase() === curColor);
+    const on = (sw.dataset.color || '').toLowerCase() === curColor;
+    sw.classList.toggle('active', on);
+    sw.setAttribute('aria-pressed', String(on));
   });
   const rs = document.getElementById('reset-styles');
   if (rs) rs.disabled = !rules.some(r => r.action === 'style' && r.source === 'preset');
@@ -252,11 +258,13 @@ function markActiveStyles(rules) {
   const active = new Set((rules || []).filter(r => !r.disabled).map(r => r.label));
   Object.entries(LOOK_LABELS).forEach(([id, labels]) => {
     const el = document.getElementById(id);
-    if (el) el.classList.toggle('active', labels.some(l => active.has(l)));
+    if (el) { const on = labels.some(l => active.has(l)); el.classList.toggle('active', on); el.setAttribute('aria-pressed', String(on)); }
   });
   document.querySelectorAll('[data-look]').forEach(chip => {
     const label = CHIP_LABELS[chip.dataset.look];
-    chip.classList.toggle('active', !!label && active.has(label));
+    const on = !!label && active.has(label);
+    chip.classList.toggle('active', on);
+    chip.setAttribute('aria-pressed', String(on));
   });
 }
 
