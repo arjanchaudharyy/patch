@@ -99,6 +99,14 @@
   .chip.serif { font-family: Georgia, serif; }
   .chip.mono { font-family: var(--mono); }
 
+  .stepper { display: flex; align-items: center; gap: 7px; margin: 6px 16px 0; }
+  .step-btn { width: 36px; height: 32px; border: 1px solid var(--line2); border-radius: 9px; background: var(--panel); color: var(--text); font: 700 14px var(--font); cursor: pointer; transition: 0.14s; }
+  .step-btn:hover { border-color: var(--blue); background: var(--panel2); }
+  .step-btn:active { transform: scale(0.95); }
+  .step-val { min-width: 54px; text-align: center; font: 650 13px var(--mono); color: var(--text); font-variant-numeric: tabular-nums; }
+  .step-reset { margin-left: auto; border: 1px solid var(--line2); border-radius: 9px; background: none; color: var(--dim); font: 600 11px var(--font); padding: 7px 12px; cursor: pointer; transition: 0.14s; }
+  .step-reset:hover { color: var(--text); border-color: var(--dim2); }
+
   .tip { margin: 11px 16px 4px; padding: 9px 12px; background: var(--panel); border-radius: 10px; font-size: 10.5px; color: var(--dim2); line-height: 1.6; }
   .tip kbd { background: var(--line2); border-radius: 4px; padding: 1px 5px; font: 9.5px var(--mono); }
 
@@ -238,6 +246,14 @@
   <button class="chip mono" data-look="mono" title="Monospace typeface">Mono</button>
   <button class="chip" data-look="rounded" title="Rounded sans typeface">Rounded</button>
   <button class="chip" data-look="readable" title="High-legibility typeface with extra spacing">Readable</button>
+</div>
+
+<div class="chip-label">Text size</div>
+<div class="stepper">
+  <button class="step-btn" id="size-down" title="Smaller">A−</button>
+  <div class="step-val" id="size-val">100%</div>
+  <button class="step-btn" id="size-up" title="Larger">A+</button>
+  <button class="step-reset" id="size-reset" title="Reset to 100%">Reset</button>
 </div>
 
 <div class="chip-label">Reading</div>

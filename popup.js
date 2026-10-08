@@ -11,6 +11,7 @@ function esc(s) {
 function clip(s, n) { return String(s || '').replace(/\s+/g, ' ').trim().slice(0, n); }
 
 let tab = null;
+let fontPct = 100;
 
 // ---- Appearance (theme + accent) -------------------------------------------
 const THEMES = ['auto', 'light', 'dark'];
@@ -97,6 +98,13 @@ async function render() {
   }
   const rules = Array.isArray(state?.rules) ? state.rules : [];
   const paused = !!state?.paused;
+
+  // Reflect the current site-wide text size in the stepper.
+  const sizeRule = rules.find(r => r.label === 'Text size');
+  const m = sizeRule && /font-size:(\d+)%/.exec(sizeRule.value || '');
+  fontPct = m ? +m[1] : 100;
+  const sv = document.getElementById('size-val');
+  if (sv) sv.textContent = fontPct + '%';
 
   // Pause switch (checked = active)
   const pt = document.getElementById('pause-toggle');
@@ -216,6 +224,18 @@ document.getElementById('look-gray').addEventListener('click', () => applyLook('
 document.querySelectorAll('[data-look]').forEach(chip => {
   chip.addEventListener('click', () => applyLook(chip.dataset.look));
 });
+
+// Text-size stepper — one adjustable rule, updated in place via set-style.
+async function applySize() {
+  document.getElementById('size-val').textContent = fontPct + '%';
+  try {
+    await send(tab, { type: 'set-style', selector: 'html', value: `font-size:${fontPct}%!important`, label: 'Text size' });
+  } catch (_) {}
+  render();
+}
+document.getElementById('size-down').addEventListener('click', () => { fontPct = Math.max(60, fontPct - 10); applySize(); });
+document.getElementById('size-up').addEventListener('click', () => { fontPct = Math.min(220, fontPct + 10); applySize(); });
+document.getElementById('size-reset').addEventListener('click', () => { fontPct = 100; applySize(); });
 
 document.getElementById('undo-btn').addEventListener('click', async () => {
   try { await send(tab, { type: 'undo-last' }); } catch (_) {}

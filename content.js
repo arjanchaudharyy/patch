@@ -956,6 +956,19 @@
         savePaused().then(() => { reconcile(true); reply({ ok: true, paused }); });
         return true;
 
+      case 'set-style': {
+        // Upsert a single adjustable style rule, keyed by selector + label.
+        // Lets controls like the text-size stepper update one rule in place
+        // instead of piling up a new rule on every tap.
+        const { selector, value, label } = msg;
+        if (typeof selector !== 'string' || typeof value !== 'string') { reply({ ok: false }); break; }
+        const existing = rules.find(r => r.action === 'style' && r.label === label && r.selector === selector);
+        if (existing) { existing.value = value; existing.disabled = false; }
+        else rules.push({ id: genId(), action: 'style', selector, value, label, source: 'preset', createdAt: Date.now() });
+        persistAnd(reply);
+        return true;
+      }
+
       case 'add-rules': {
         const incoming = Array.isArray(msg.rules) ? msg.rules : [];
         let added = 0;
