@@ -85,6 +85,13 @@
   .ai-btn svg { width: 16px; height: 16px; }
   .ai-btn .ai-kbd { margin-left: 2px; font: 400 10px var(--mono); opacity: 0.6; }
 
+  .styles-head { display: flex; align-items: center; justify-content: space-between; margin: 12px 16px 0; padding: 9px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; font: 700 10.5px var(--font); color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; user-select: none; transition: 0.14s; }
+  .styles-head:hover { color: var(--text); border-color: var(--line2); }
+  .styles-head svg { width: 14px; height: 14px; transition: transform 0.2s; }
+  .styles-head.collapsed svg { transform: rotate(-90deg); }
+  .styles-body.hidden { display: none; }
+  .styles-body > .looks:first-child { margin-top: 10px; }
+
   .looks { display: flex; gap: 7px; margin: 10px 16px 0; }
   .look { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1px solid var(--line2); border-radius: 10px; background: var(--panel); color: var(--dim); font: 600 11px var(--font); cursor: pointer; transition: 0.14s; }
   .look:hover { color: var(--text); border-color: var(--dim2); background: var(--panel2); }
@@ -233,6 +240,12 @@
   Ask Claude to edit an element <span class="ai-kbd">⌥⇧C</span>
 </button>
 
+<div class="styles-head" id="styles-toggle">
+  <span>Quick styles</span>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+</div>
+<div class="styles-body" id="styles-body">
+
 <div class="looks">
   <button class="look" id="look-dark" title="Invert the whole site to dark">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Dark
@@ -277,6 +290,8 @@
 </div>
 
 <button class="reset-styles" id="reset-styles" title="Remove all one-tap looks, fonts, text size and reading styles on this site">Reset quick styles</button>
+
+</div><!-- /styles-body -->
 
 <div class="tip">
   Click a mode, then click any element. Use <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> to target parent / child / siblings precisely.

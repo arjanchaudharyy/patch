@@ -293,5 +293,21 @@ document.getElementById('manage-btn').addEventListener('click', () => {
   window.close();
 });
 
+// Collapsible "Quick styles" section — remembers open/closed per browser.
+(function initStylesSection() {
+  const head = document.getElementById('styles-toggle');
+  const body = document.getElementById('styles-body');
+  if (!head || !body) return;
+  const saved = localStorage.getItem('pp_styles_open');
+  const open = saved === null ? true : saved === '1';
+  body.classList.toggle('hidden', !open);
+  head.classList.toggle('collapsed', !open);
+  head.addEventListener('click', () => {
+    const nowHidden = body.classList.toggle('hidden');
+    head.classList.toggle('collapsed', nowHidden);
+    localStorage.setItem('pp_styles_open', nowHidden ? '0' : '1');
+  });
+})();
+
 initAppearance();
 render();
