@@ -82,11 +82,32 @@ Unlike JS-based customizers, PagePatch packs contain **only declarative rules**
 installing a stranger's pack can't run anything on your machine. Make a
 distraction-free Twitter, share the pack, done.
 
-## One-tap looks
+## Appearance (PagePatch's own UI)
 
-From the popup: **Dark** (invert any site to dark mode), **Bigger** (scale up text),
-and **Calm** (grayscale). Each is just a reversible style rule — toggle or delete it
-like any other patch.
+Click the **gear** in the popup header (or the theme button in the dashboard toolbar)
+to set how PagePatch itself looks:
+
+- **Theme** — Auto / Light / Dark. *Auto* follows your OS and flips live. Applied
+  before first paint, so there's no flash.
+- **Accent** — Blue, Purple, Green, Orange, Pink, or Teal. Recolors every accent in
+  the popup and dashboard.
+
+Your choice is shared between the popup and the dashboard and persists across
+restarts (`localStorage` + `chrome.storage.local`).
+
+## One-tap styles
+
+Reshape any site from the popup. Each is a reversible style rule — toggle or delete
+it like any other patch.
+
+- **Looks** — **Dark** (invert to dark mode), **Bigger** (scale up text), **Calm**
+  (grayscale).
+- **Fonts** — **Serif**, **Mono**, **Rounded**, or **Readable** (high-legibility
+  typeface with extra spacing) applied site-wide, without breaking icon fonts.
+- **Text size** — a stepper (`A−` / `A+` / **Reset**) that scales the whole site
+  from 60% to 220% and updates one rule in place.
+- **Reading** — **Comfort spacing** (looser lines), **High contrast**, **Sepia**
+  (warm, paper-like tone).
 
 ## How it works
 
