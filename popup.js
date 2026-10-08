@@ -12,6 +12,60 @@ function clip(s, n) { return String(s || '').replace(/\s+/g, ' ').trim().slice(0
 
 let tab = null;
 
+// ---- Appearance (theme + accent) -------------------------------------------
+const THEMES = ['auto', 'light', 'dark'];
+const ACCENTS = ['blue', 'purple', 'green', 'orange', 'pink', 'teal'];
+
+function resolveTheme(t) {
+  if (t === 'auto') {
+    return matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  return t;
+}
+function applyAppearance(theme, accent) {
+  const d = document.documentElement;
+  d.setAttribute('data-theme', resolveTheme(theme));
+  d.setAttribute('data-accent', accent);
+  // Reflect active states in the popover.
+  document.querySelectorAll('#theme-seg [data-theme-val]').forEach(b => {
+    b.classList.toggle('active', b.dataset.themeVal === theme);
+  });
+  document.querySelectorAll('#accents .accent-dot').forEach(b => {
+    b.classList.toggle('active', b.dataset.accent === accent);
+  });
+}
+function getTheme() { return localStorage.getItem('pp_theme') || 'auto'; }
+function getAccent() { return localStorage.getItem('pp_accent') || 'blue'; }
+function setTheme(t) {
+  localStorage.setItem('pp_theme', t);
+  try { chrome.storage.local.set({ pp_theme: t }); } catch (_) {}
+  applyAppearance(t, getAccent());
+}
+function setAccent(a) {
+  localStorage.setItem('pp_accent', a);
+  try { chrome.storage.local.set({ pp_accent: a }); } catch (_) {}
+  applyAppearance(getTheme(), a);
+}
+function initAppearance() {
+  applyAppearance(getTheme(), getAccent());
+  const panel = document.getElementById('appearance');
+  const btn = document.getElementById('theme-btn');
+  btn.addEventListener('click', () => {
+    const open = panel.classList.toggle('show');
+    btn.classList.toggle('open', open);
+  });
+  document.querySelectorAll('#theme-seg [data-theme-val]').forEach(b => {
+    b.addEventListener('click', () => setTheme(b.dataset.themeVal));
+  });
+  document.querySelectorAll('#accents .accent-dot').forEach(b => {
+    b.addEventListener('click', () => setAccent(b.dataset.accent));
+  });
+  // Keep "Auto" live if the OS theme flips while the popup is open.
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+    if (getTheme() === 'auto') applyAppearance('auto', getAccent());
+  });
+}
+
 function disableAll(reason) {
   document.getElementById('hide-btn').disabled = true;
   document.getElementById('edit-btn').disabled = true;
@@ -160,4 +214,5 @@ document.getElementById('manage-btn').addEventListener('click', () => {
   window.close();
 });
 
+initAppearance();
 render();
