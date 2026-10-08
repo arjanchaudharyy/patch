@@ -28,6 +28,7 @@
     --blue: #0A84FF; --red: #FF453A; --green: #30D158;
     --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
     --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+    --switch-off: #39404E;
     --accent-soft: color-mix(in srgb, var(--blue) 14%, transparent);
     --accent-line: color-mix(in srgb, var(--blue) 32%, transparent);
   }
@@ -35,6 +36,7 @@
   :root[data-theme="light"] {
     --bg: #F2F2F7; --panel: #FFFFFF; --panel2: #E9E9EF; --line: #E4E4EA; --line2: #D4D4DB;
     --text: #1C1C1E; --dim: #636369; --dim2: #8E8E93;
+    --switch-off: #C7C7CC;
   }
   /* Accent colors — recolor every variable-driven accent in one place. */
   :root[data-accent="purple"] { --blue: #BF5AF2; }
@@ -52,7 +54,7 @@
   /* iOS switch */
   .switch { position: relative; width: 40px; height: 24px; flex-shrink: 0; display: inline-block; }
   .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
-  .switch .track { position: absolute; inset: 0; background: #39404E; border-radius: 999px; transition: background 0.2s ease; }
+  .switch .track { position: absolute; inset: 0; background: var(--switch-off); border-radius: 999px; transition: background 0.2s ease; }
   .switch .thumb { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.22s cubic-bezier(0.32,0.72,0,1); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
   .switch input:checked + .track { background: var(--green); }
   .switch input:checked + .track + .thumb { transform: translateX(16px); }
