@@ -7,19 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
 <link rel="icon" type="image/x-icon" href="icons/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon.png">
-<script>
-  // Apply saved appearance synchronously, before first paint, to avoid any flash.
-  try {
-    var _t = localStorage.getItem('pp_theme') || 'auto';
-    var _a = localStorage.getItem('pp_accent') || 'blue';
-    var _resolved = _t === 'auto'
-      ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
-      : _t;
-    var _d = document.documentElement;
-    _d.setAttribute('data-theme', _resolved);
-    _d.setAttribute('data-accent', _a);
-  } catch (e) {}
-</script>
+<script src="theme-init.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
