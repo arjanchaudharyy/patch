@@ -102,12 +102,19 @@ it like any other patch.
 
 - **Looks** — **Dark** (invert to dark mode), **Bigger** (scale up text), **Calm**
   (grayscale).
-- **Fonts** — **Serif**, **Mono**, **Rounded**, or **Readable** (high-legibility
-  typeface with extra spacing) applied site-wide, without breaking icon fonts.
+- **Fonts** — **Serif**, **Mono**, **Rounded**, **Readable**, **Dyslexic**
+  (dyslexia-friendly), or **Slab**, applied site-wide without breaking icon fonts.
 - **Text size** — a stepper (`A−` / `A+` / **Reset**) that scales the whole site
   from 60% to 220% and updates one rule in place.
+- **Text color** — swatches to recolor body text, with a **×** to clear it.
 - **Reading** — **Comfort spacing** (looser lines), **High contrast**, **Sepia**
   (warm, paper-like tone).
+- **Layout** — **Right-to-left** (for Arabic/Hebrew/Urdu reading), **Underline
+  links**, **Left-align**, **Hide images**.
+
+Everything above lives under a collapsible **Quick styles** header and has a single
+**Reset quick styles** that clears only these presets, leaving your hide/text patches
+and AI edits intact.
 
 ## How it works
 
